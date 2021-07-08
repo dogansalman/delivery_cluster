@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 import random
-  
+import geopy
+import geopy.distance
+import folium
+import numpy as np
+import base64
+from folium import IFrame
+
+
 '''
 Kurgu aşağıdaki şekilde gerçekleşmektedir.
 - distributionGeocode: Kuryelerin çıkış noktasını temsil etmektedir.
@@ -26,7 +33,6 @@ class DeliveryPoint():
       self.orders =  Orders()
 
   
-
 class DeliveryCluster(): 
   # Params
   # distribution_geocode : Object{lat:float, lng:float}
@@ -38,12 +44,13 @@ class DeliveryCluster():
       self.deliveryPointCount = deliveryPointCount
       self.deliveryPoints = self.generateDeliveryPoint(deliveryPointCount)
       
+      self.virtualizeDeliveryPoint()
 
   # Random teslimat noktasi oluşturur.
   def generateDeliveryPoint(self, deliveryPointCount):
     deliveryPoints = []
     
-    # Tekirdağ-Çorlu ilçe sınırları google.
+    # Tekirdağ-Çorlu ilçe sınırları
     # Bu bilgi, sınırlar içerisinde rastgele geocode oluşturulması için kullanılmaktadır.
     max_lat = 41.211552
     min_lat = 41.125490
@@ -64,13 +71,28 @@ class DeliveryCluster():
     return deliveryPoints
 
 
+  # Teslimat noktalarını görselleştir
+  def virtualizeDeliveryPoint(self):
+    m = folium.Map(location=[self.distributionGeocode['lat'], self.distributionGeocode['lng']], tiles="OpenStreetMap", zoom_start=12)
+    for i in self.deliveryPoints:
+      folium.Marker(location=[i.lat, i.lng], popup="delivery").add_to(m)
+    m.save('delivery_points.html')
+
 distributionGeo = {'lat': 41.157733, 'lng': 27.805881}
 
-c = DeliveryCluster(distributionGeo, 5)
+c = DeliveryCluster(distributionGeo, 50)
 for deliveryPoint in c.deliveryPoints:
-  print(deliveryPoint.lat, deliveryPoint.lng)
-#print(c.deliveryPoints[0]['orders'].product)
+  # print(deliveryPoint.lat, deliveryPoint.lng)
+  start = geopy.Point(deliveryPoint.lat, deliveryPoint.lng)
+  
 
+  # Define a general distance object, initialized with a distance of 1 km.
+  d = geopy.distance.distance(kilometers=1)
+  # Use the `destination` method with a bearing of 0 degrees (which is north)
+  # in order to go from point `start` 1 km to north.
+  #print(d.destination(point=start, bearing=0))
+  
 
-
-
+# 41.168348857257584 27.778526775013233
+#41.10384716,27.46426964
+#rough_distance = geopy.units.degrees(arcminutes=geopy.units.nautical(miles=0.621371192))
