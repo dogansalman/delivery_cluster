@@ -3,8 +3,6 @@ import random
 import geopy
 import geopy.distance
 import folium
-import numpy as np
-import base64
 from folium import IFrame
 
 
@@ -62,10 +60,13 @@ class DeliveryCluster():
       deliveryLat = random.uniform(min_lat, max_lat)
       deliveryLng = random.uniform(min_lng, max_lng)
       deliveryPoints.append(DeliveryPoint(deliveryLat, deliveryLng))
+      # TODO: Dağıtım noktasına yakınlığa göre sırala (teslimat noktası 1000 olacağı için ilk başta diziyi oluştururken sıralı olarak oluştur.)
       # if len(deliveryPoints) == 0:
       #   deliveryPoints.append(DeliveryPoint(deliveryLat, deliveryLng))
       # else:
       #   pass
+      
+      
       # Todo random teslimat noktaları oluşturulurken 1km çap içinde olanlar küme
         
     return deliveryPoints
@@ -80,9 +81,8 @@ class DeliveryCluster():
 
 distributionGeo = {'lat': 41.157733, 'lng': 27.805881}
 
-c = DeliveryCluster(distributionGeo, 50)
+c = DeliveryCluster(distributionGeo, 1)
 for deliveryPoint in c.deliveryPoints:
-  # print(deliveryPoint.lat, deliveryPoint.lng)
   start = geopy.Point(deliveryPoint.lat, deliveryPoint.lng)
   
 
@@ -90,7 +90,7 @@ for deliveryPoint in c.deliveryPoints:
   d = geopy.distance.distance(kilometers=1)
   # Use the `destination` method with a bearing of 0 degrees (which is north)
   # in order to go from point `start` 1 km to north.
-  #print(d.destination(point=start, bearing=0))
+  print(d.destination(point=start, bearing=0))
   
 
 # 41.168348857257584 27.778526775013233

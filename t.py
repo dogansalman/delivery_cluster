@@ -1,6 +1,8 @@
 import pandas as pd
 import folium
-
+'''
+   Dağıtıma gönderilen kuryeleri örnekteki şekilde görselleştir.
+'''
 m = folium.Map(location=[20,0], tiles="OpenStreetMap", zoom_start=2)
 
 # Make a data frame with dots to show on the map
@@ -21,4 +23,4 @@ for i in range(0,len(data)):
       fill_color='crimson'
    ).add_to(m)
 
-   m.save('-bubble-map-with-folium.html')
+   m.save('delivery_point_map.html')
